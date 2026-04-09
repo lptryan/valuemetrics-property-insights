@@ -15,12 +15,6 @@ function useAdminData(table: string, page: number) {
   return useQuery({
     queryKey: ["admin", table, page],
     queryFn: async () => {
-      const { data, error } = await supabase.functions.invoke("admin-data", {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-        body: undefined,
-      });
-      // Edge functions invoked via SDK use POST by default; use fetch instead
       const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/admin-data?table=${table}&limit=${PAGE_SIZE}&offset=${page * PAGE_SIZE}`;
       const res = await fetch(url, {
         headers: {
