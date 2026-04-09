@@ -113,6 +113,12 @@ const Results = () => {
         open={open}
         onClose={closeModal}
         onSubmitted={markSubmitted}
+        estimateData={{
+          address,
+          estimatedValue: valuation.estimatedValue,
+          confidenceLow: valuation.confidenceLow,
+          confidenceHigh: valuation.confidenceHigh,
+        }}
       />
     </div>
   );

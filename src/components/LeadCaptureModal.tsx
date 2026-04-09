@@ -1,8 +1,9 @@
 import { useState, useEffect, useCallback, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { X, Loader2, FileText } from "lucide-react";
+import { X, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -58,7 +59,6 @@ export function useLeadModal() {
     setOpen(false);
     cooldownUntil.current = Date.now() + 60_000;
     clearTimeout(timerRef.current);
-    // restart timer after cooldown
     setTimeout(() => startTimer(), 60_000);
   }, [startTimer]);
 
@@ -106,6 +106,12 @@ interface LeadCaptureModalProps {
   onClose: () => void;
   onSubmitted: () => void;
   estimateId?: string;
+  estimateData?: {
+    address: string;
+    estimatedValue: number;
+    confidenceLow: number;
+    confidenceHigh: number;
+  };
 }
 
 export function LeadCaptureModal({
@@ -113,14 +119,16 @@ export function LeadCaptureModal({
   onClose,
   onSubmitted,
   estimateId,
+  estimateData,
 }: LeadCaptureModalProps) {
   const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const form = useForm<LeadForm>({
     resolver: zodResolver(leadSchema),
     defaultValues: { full_name: "", email: "", phone: "", situation: "" },
+    mode: "onChange",
   });
 
   const onSubmit = async (values: LeadForm) => {
@@ -138,9 +146,21 @@ export function LeadCaptureModal({
         utm_campaign: params.get("utm_campaign") || null,
       });
       if (error) throw error;
-      setSuccess(true);
+
       onSubmitted();
-      toast({ title: "Thank you!", description: "We'll be in touch shortly." });
+
+      // Navigate to confirmation page with estimate context
+      const resultsUrl = `/results?address=${encodeURIComponent(estimateData?.address || "")}`;
+      navigate("/confirmation", {
+        state: {
+          email: values.email,
+          address: estimateData?.address || "Your Property",
+          estimatedValue: estimateData?.estimatedValue || 487500,
+          confidenceLow: estimateData?.confidenceLow || 458000,
+          confidenceHigh: estimateData?.confidenceHigh || 517000,
+          resultsUrl,
+        },
+      });
     } catch {
       toast({
         title: "Error",
@@ -171,121 +191,100 @@ export function LeadCaptureModal({
           <X className="h-5 w-5" />
         </button>
 
-        {success ? (
-          /* ── Confirmation ────────────────────────── */
-          <div className="text-center py-6">
-            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-sky/10 mb-4">
-              <FileText className="h-6 w-6 text-sky" />
-            </div>
-            <h3 className="text-lg font-bold text-navy mb-2">Review Requested!</h3>
-            <p className="text-sm text-mid">
-              A licensed agent will contact you shortly to discuss your property.
-            </p>
-          </div>
-        ) : (
-          /* ── Form ────────────────────────────────── */
-          <>
-            <h2 className="text-[22px] font-semibold text-navy mb-1">
-              Request a Professional Review
-            </h2>
-            <p className="text-sm text-mid mb-6">
-              A licensed local agent will contact you to discuss your estimate.
-            </p>
+        <h2 className="text-[22px] font-semibold text-navy mb-1">
+          Request a Professional Review
+        </h2>
+        <p className="text-sm text-mid mb-6">
+          A licensed local agent will contact you to discuss your estimate.
+        </p>
 
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              {/* Full Name */}
-              <div className="space-y-1.5">
-                <label className="text-sm font-medium text-navy">Full Name</label>
-                <Input
-                  placeholder="Jane Smith"
-                  {...form.register("full_name")}
-                  className="rounded-md"
-                />
-                {form.formState.errors.full_name && (
-                  <p className="text-xs text-destructive">
-                    {form.formState.errors.full_name.message}
-                  </p>
-                )}
-              </div>
-
-              {/* Email */}
-              <div className="space-y-1.5">
-                <label className="text-sm font-medium text-navy">
-                  Email Address
-                </label>
-                <Input
-                  type="email"
-                  placeholder="jane@example.com"
-                  {...form.register("email")}
-                  className="rounded-md"
-                />
-                {form.formState.errors.email && (
-                  <p className="text-xs text-destructive">
-                    {form.formState.errors.email.message}
-                  </p>
-                )}
-              </div>
-
-              {/* Phone */}
-              <div className="space-y-1.5">
-                <label className="text-sm font-medium text-navy">
-                  Phone Number{" "}
-                  <span className="text-mid font-normal">(optional)</span>
-                </label>
-                <Input
-                  type="tel"
-                  placeholder="(555) 123-4567"
-                  {...form.register("phone")}
-                  className="rounded-md"
-                />
-              </div>
-
-              {/* Situation */}
-              <div className="space-y-1.5">
-                <label className="text-sm font-medium text-navy">
-                  What describes your situation?
-                </label>
-                <Controller
-                  control={form.control}
-                  name="situation"
-                  render={({ field }) => (
-                    <Select
-                      value={field.value}
-                      onValueChange={field.onChange}
-                    >
-                      <SelectTrigger className="rounded-md">
-                        <SelectValue placeholder="Select one…" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {SITUATIONS.map((s) => (
-                          <SelectItem key={s} value={s}>
-                            {s}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  )}
-                />
-              </div>
-
-              {/* Submit */}
-              <Button
-                type="submit"
-                disabled={loading || !form.formState.isValid}
-                className="w-full h-12 rounded-md bg-navy text-sky hover:bg-navy/90 font-semibold text-base transition-all"
-              >
-                {loading && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
-                {loading ? "Submitting…" : "Request Review"}
-              </Button>
-
-              {/* TCPA */}
-              <p className="text-center" style={{ fontSize: "11px", color: "#94a3b8" }}>
-                By submitting, you agree to be contacted by a licensed real estate
-                professional. Standard message rates may apply.
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          {/* Full Name */}
+          <div className="space-y-1.5">
+            <label className="text-sm font-medium text-navy">Full Name</label>
+            <Input
+              placeholder="Jane Smith"
+              {...form.register("full_name")}
+              className="rounded-md"
+            />
+            {form.formState.errors.full_name && (
+              <p className="text-xs text-destructive">
+                {form.formState.errors.full_name.message}
               </p>
-            </form>
-          </>
-        )}
+            )}
+          </div>
+
+          {/* Email */}
+          <div className="space-y-1.5">
+            <label className="text-sm font-medium text-navy">Email Address</label>
+            <Input
+              type="email"
+              placeholder="jane@example.com"
+              {...form.register("email")}
+              className="rounded-md"
+            />
+            {form.formState.errors.email && (
+              <p className="text-xs text-destructive">
+                {form.formState.errors.email.message}
+              </p>
+            )}
+          </div>
+
+          {/* Phone */}
+          <div className="space-y-1.5">
+            <label className="text-sm font-medium text-navy">
+              Phone Number{" "}
+              <span className="text-mid font-normal">(optional)</span>
+            </label>
+            <Input
+              type="tel"
+              placeholder="(555) 123-4567"
+              {...form.register("phone")}
+              className="rounded-md"
+            />
+          </div>
+
+          {/* Situation */}
+          <div className="space-y-1.5">
+            <label className="text-sm font-medium text-navy">
+              What describes your situation?
+            </label>
+            <Controller
+              control={form.control}
+              name="situation"
+              render={({ field }) => (
+                <Select value={field.value} onValueChange={field.onChange}>
+                  <SelectTrigger className="rounded-md">
+                    <SelectValue placeholder="Select one…" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {SITUATIONS.map((s) => (
+                      <SelectItem key={s} value={s}>
+                        {s}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            />
+          </div>
+
+          {/* Submit */}
+          <Button
+            type="submit"
+            disabled={loading || !form.formState.isValid}
+            className="w-full h-12 rounded-md bg-navy text-sky hover:bg-navy/90 font-semibold text-base transition-all"
+          >
+            {loading && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
+            {loading ? "Submitting…" : "Request Review"}
+          </Button>
+
+          {/* TCPA */}
+          <p className="text-center" style={{ fontSize: "11px", color: "#94a3b8" }}>
+            By submitting, you agree to be contacted by a licensed real estate
+            professional. Standard message rates may apply.
+          </p>
+        </form>
       </div>
     </div>
   );
