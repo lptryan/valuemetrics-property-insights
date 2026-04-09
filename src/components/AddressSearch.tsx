@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, MapPin } from "lucide-react";
+import { MapPin, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const AddressSearch = () => {
@@ -15,8 +15,8 @@ const AddressSearch = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="w-full max-w-2xl mx-auto">
-      <div className="relative flex items-center bg-card rounded-lg shadow-lg border border-border overflow-hidden">
+    <form onSubmit={handleSubmit} className="w-full">
+      <div className="relative flex items-center bg-card border border-border rounded-md overflow-hidden h-14">
         <div className="flex items-center pl-4 text-mid">
           <MapPin className="h-5 w-5" />
         </div>
@@ -24,21 +24,18 @@ const AddressSearch = () => {
           type="text"
           value={address}
           onChange={(e) => setAddress(e.target.value)}
-          placeholder="Enter a property address…"
-          className="flex-1 px-4 py-4 text-base bg-transparent text-foreground placeholder:text-mid outline-none font-primary"
+          placeholder="Enter your property address"
+          className="flex-1 px-3 py-3 text-base bg-transparent text-foreground placeholder:text-mid outline-none font-primary"
         />
         <Button
           type="submit"
-          className="m-1.5 rounded-md bg-navy text-sky hover:bg-navy/90 px-6 h-10 font-semibold transition-all"
+          className="m-1.5 rounded-full bg-navy text-sky hover:bg-navy/90 px-5 h-10 font-semibold text-base transition-all"
           disabled={!address.trim()}
         >
-          <Search className="h-4 w-4 mr-2" />
-          Estimate
+          Estimate Value
+          <ArrowRight className="h-4 w-4 ml-1" />
         </Button>
       </div>
-      <p className="text-xs text-mid mt-3 text-center">
-        Try: 123 Main St, Anytown, CA 90210
-      </p>
     </form>
   );
 };
