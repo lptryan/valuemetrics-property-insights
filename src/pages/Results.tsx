@@ -4,8 +4,13 @@ import Footer from "@/components/Footer";
 import ValuationDisplay from "@/components/ValuationDisplay";
 import ComparableSales from "@/components/ComparableSales";
 import NeighborhoodModule from "@/components/NeighborhoodModule";
-import LeadCaptureForm from "@/components/LeadCaptureForm";
+import {
+  ExpertReviewCTA,
+  LeadCaptureModal,
+  useLeadModal,
+} from "@/components/LeadCaptureModal";
 import { ArrowLeft } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const DEMO_VALUATION = {
   estimatedValue: 487500,
@@ -40,6 +45,7 @@ const DEMO_NEIGHBORHOOD = {
 const Results = () => {
   const [params] = useSearchParams();
   const location = useLocation();
+  const { open, submitted, openModal, closeModal, markSubmitted } = useLeadModal();
 
   const state = location.state as {
     valuation?: typeof DEMO_VALUATION;
@@ -67,22 +73,18 @@ const Results = () => {
           </Link>
 
           {hasError && (
-            <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
-              <p className="text-sm text-red-700">
+            <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-4 mb-6">
+              <p className="text-sm text-destructive">
                 Estimate unavailable for this property. Values shown are approximate.
               </p>
             </div>
           )}
 
-          {/* Two-column desktop layout */}
           <div className="grid lg:grid-cols-5 gap-8">
             {/* Left – 40% */}
             <div className="lg:col-span-2 space-y-6">
-              <ValuationDisplay
-                formattedAddress={address}
-                {...valuation}
-              />
-              <LeadCaptureForm />
+              <ValuationDisplay formattedAddress={address} {...valuation} />
+              {!submitted && <ExpertReviewCTA onClick={openModal} />}
             </div>
 
             {/* Right – 60% */}
@@ -94,6 +96,24 @@ const Results = () => {
         </div>
       </main>
       <Footer />
+
+      {/* Mobile sticky CTA */}
+      {!submitted && (
+        <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-card border-t border-border p-3 z-40">
+          <Button
+            onClick={openModal}
+            className="w-full h-12 rounded-md bg-navy text-sky hover:bg-navy/90 font-semibold text-base"
+          >
+            Get Expert Review
+          </Button>
+        </div>
+      )}
+
+      <LeadCaptureModal
+        open={open}
+        onClose={closeModal}
+        onSubmitted={markSubmitted}
+      />
     </div>
   );
 };
