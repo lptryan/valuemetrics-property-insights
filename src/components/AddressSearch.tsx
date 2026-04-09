@@ -6,16 +6,18 @@ import EstimateLoading from "@/components/EstimateLoading";
 
 // Demo data used until ATTOM API is wired up
 const DEMO_VALUATION = {
-  estimatedValue: 685000,
-  confidenceLow: 645000,
-  confidenceHigh: 725000,
+  estimatedValue: 487500,
+  confidenceLow: 458000,
+  confidenceHigh: 517000,
   confidenceScore: 0.87,
 };
 
 const DEMO_COMPS = [
-  { address: "456 Oak Ave, Anytown, CA 90210", salePrice: 670000, saleDate: "Mar 2024", sqft: 1850, beds: 3, baths: 2, distance: "0.3 mi" },
-  { address: "789 Elm St, Anytown, CA 90210", salePrice: 710000, saleDate: "Feb 2024", sqft: 2100, beds: 4, baths: 2.5, distance: "0.5 mi" },
-  { address: "321 Maple Dr, Anytown, CA 90210", salePrice: 655000, saleDate: "Jan 2024", sqft: 1720, beds: 3, baths: 2, distance: "0.7 mi" },
+  { address: "456 Oak Ave, Anytown, CA 90210", salePrice: 510000, saleDate: "Mar 2024", sqft: 1850, beds: 3, baths: 2, distance: "0.3 mi" },
+  { address: "789 Elm St, Anytown, CA 90210", salePrice: 495000, saleDate: "Feb 2024", sqft: 2100, beds: 4, baths: 2.5, distance: "0.5 mi" },
+  { address: "321 Maple Dr, Anytown, CA 90210", salePrice: 472000, saleDate: "Jan 2024", sqft: 1720, beds: 3, baths: 2, distance: "0.7 mi" },
+  { address: "654 Pine Ct, Anytown, CA 90210", salePrice: 465000, saleDate: "Dec 2023", sqft: 1680, beds: 3, baths: 2, distance: "0.8 mi" },
+  { address: "987 Cedar Ln, Anytown, CA 90210", salePrice: 520000, saleDate: "Nov 2023", sqft: 2050, beds: 4, baths: 3, distance: "0.9 mi" },
 ];
 
 const AddressSearch = () => {
