@@ -34,9 +34,9 @@ const ValuationDisplay = ({
   formattedAddress,
 }: ValuationDisplayProps) => {
   return (
-    <div className="space-y-5">
+    <div className="space-y-4 md:space-y-5">
       {/* Address */}
-      <p className="text-sm font-medium text-navy">{formattedAddress}</p>
+      <p className="text-sm font-medium text-navy break-words">{formattedAddress}</p>
 
       {/* Eyebrow */}
       <p
@@ -46,11 +46,10 @@ const ValuationDisplay = ({
         ESTIMATED MARKET VALUE
       </p>
 
-      {/* Big value */}
+      {/* Big value — smaller on mobile */}
       <p
-        className="text-navy font-extrabold"
+        className="text-navy font-extrabold text-[40px] md:text-[56px]"
         style={{
-          fontSize: "56px",
           fontVariantNumeric: "tabular-nums",
           letterSpacing: "-0.02em",
           lineHeight: 1.1,
@@ -60,11 +59,10 @@ const ValuationDisplay = ({
       </p>
 
       {/* Confidence range + tooltip */}
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 flex-wrap">
         <p
-          className="text-mid"
+          className="text-mid text-base md:text-xl"
           style={{
-            fontSize: "20px",
             fontVariantNumeric: "tabular-nums",
             letterSpacing: "-0.02em",
           }}

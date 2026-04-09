@@ -63,10 +63,10 @@ const Results = () => {
     <div className="min-h-screen flex flex-col bg-card">
       <Navbar />
       <main className="flex-1">
-        <div className="mx-auto max-w-[960px] px-4 py-8">
+        <div className="mx-auto max-w-[960px] px-4 py-6 md:py-8 pb-24 lg:pb-8">
           <Link
             to="/"
-            className="inline-flex items-center gap-1.5 text-sm text-mid hover:text-navy transition-colors mb-8"
+            className="inline-flex items-center gap-1.5 text-sm text-mid hover:text-navy transition-colors mb-6 md:mb-8"
           >
             <ArrowLeft className="h-4 w-4" />
             New Search
@@ -80,18 +80,31 @@ const Results = () => {
             </div>
           )}
 
-          <div className="grid lg:grid-cols-5 gap-8">
-            {/* Left – 40% */}
+          {/* Single column on mobile, 2/3 split on desktop */}
+          <div className="flex flex-col lg:grid lg:grid-cols-5 gap-6 lg:gap-8">
+            {/* Left – valuation */}
             <div className="lg:col-span-2 space-y-6">
               <ValuationDisplay formattedAddress={address} {...valuation} />
-              {!submitted && <ExpertReviewCTA onClick={openModal} />}
+              {/* Desktop CTA */}
+              {!submitted && (
+                <div className="hidden lg:block">
+                  <ExpertReviewCTA onClick={openModal} />
+                </div>
+              )}
             </div>
 
-            {/* Right – 60% */}
+            {/* Right – comps + neighborhood */}
             <div className="lg:col-span-3 space-y-6">
               <ComparableSales comps={comps} />
               <NeighborhoodModule data={DEMO_NEIGHBORHOOD} />
             </div>
+
+            {/* Mobile CTA card inline */}
+            {!submitted && (
+              <div className="lg:hidden">
+                <ExpertReviewCTA onClick={openModal} />
+              </div>
+            )}
           </div>
         </div>
       </main>

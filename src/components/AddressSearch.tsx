@@ -33,7 +33,6 @@ const AddressSearch = () => {
   };
 
   const handleLoadingComplete = () => {
-    // Navigate with demo data via state (will be replaced by real API data later)
     navigate(`/results?address=${encodeURIComponent(address.trim())}`, {
       state: {
         valuation: DEMO_VALUATION,
@@ -52,7 +51,8 @@ const AddressSearch = () => {
         />
       )}
       <form onSubmit={handleSubmit} className="w-full">
-        <div className="relative flex items-center bg-card border border-border rounded-md overflow-hidden h-14 focus-within:border-sky focus-within:ring-[3px] focus-within:ring-sky/15 transition-all">
+        {/* Desktop: inline button */}
+        <div className="hidden md:flex relative items-center bg-card border border-border rounded-md overflow-hidden h-14 focus-within:border-sky focus-within:ring-[3px] focus-within:ring-sky/15 transition-all">
           <div className="flex items-center pl-4 text-mid">
             <MapPin className="h-5 w-5" />
           </div>
@@ -66,6 +66,30 @@ const AddressSearch = () => {
           <Button
             type="submit"
             className="m-1.5 rounded-full bg-navy text-sky hover:bg-navy/90 px-5 h-10 font-semibold text-base transition-all"
+            disabled={!address.trim()}
+          >
+            Estimate Value
+            <ArrowRight className="h-4 w-4 ml-1" />
+          </Button>
+        </div>
+
+        {/* Mobile: stacked input + full-width button */}
+        <div className="flex md:hidden flex-col gap-3">
+          <div className="flex items-center bg-card border border-border rounded-md h-14 focus-within:border-sky focus-within:ring-[3px] focus-within:ring-sky/15 transition-all">
+            <div className="flex items-center pl-4 text-mid">
+              <MapPin className="h-5 w-5" />
+            </div>
+            <input
+              type="text"
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+              placeholder="Enter your property address"
+              className="flex-1 px-3 py-3 text-base bg-transparent text-foreground placeholder:text-mid outline-none font-primary"
+            />
+          </div>
+          <Button
+            type="submit"
+            className="w-full h-12 rounded-md bg-navy text-sky hover:bg-navy/90 font-semibold text-base transition-all"
             disabled={!address.trim()}
           >
             Estimate Value
