@@ -1,4 +1,5 @@
-import { Home, Calendar, Ruler } from "lucide-react";
+import { useState, useMemo } from "react";
+import { ArrowUpDown } from "lucide-react";
 
 interface Comp {
   address: string;
@@ -21,47 +22,87 @@ const formatCurrency = (val: number) =>
     maximumFractionDigits: 0,
   }).format(val);
 
+type SortDir = "asc" | "desc";
+
 const ComparableSales = ({ comps }: ComparableSalesProps) => {
+  const [sortDir, setSortDir] = useState<SortDir>("desc");
+
+  const sorted = useMemo(
+    () =>
+      [...comps].sort((a, b) =>
+        sortDir === "desc" ? b.salePrice - a.salePrice : a.salePrice - b.salePrice
+      ),
+    [comps, sortDir]
+  );
+
   if (!comps.length) return null;
+
+  const toggleSort = () => setSortDir((d) => (d === "desc" ? "asc" : "desc"));
 
   return (
     <div className="space-y-4">
-      <h3 className="text-lg font-bold text-navy">Comparable Sales</h3>
-      <div className="grid gap-3">
-        {comps.map((comp, i) => (
-          <div
-            key={i}
-            className="bg-card rounded-lg border border-border p-5 hover:shadow-sm transition-shadow"
-          >
-            <div className="flex items-start justify-between gap-4">
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-1">
-                  <Home className="h-4 w-4 text-sky shrink-0" />
-                  <p className="text-sm font-semibold text-navy truncate">
+      <h3 className="text-lg font-bold text-navy">
+        {comps.length} Recent Sales Nearby
+      </h3>
+
+      <div className="overflow-x-auto rounded-xl border border-border">
+        <table className="w-full text-left min-w-[640px]">
+          <thead>
+            <tr
+              className="bg-sky text-white"
+              style={{ fontSize: "11px", letterSpacing: "0.05em" }}
+            >
+              <th className="uppercase font-semibold px-4 py-3 sticky left-0 bg-sky z-10">
+                Address
+              </th>
+              <th className="uppercase font-semibold px-3 py-3">Beds/Baths</th>
+              <th className="uppercase font-semibold px-3 py-3">Sq Ft</th>
+              <th className="uppercase font-semibold px-3 py-3">
+                <button
+                  onClick={toggleSort}
+                  className="inline-flex items-center gap-1 hover:opacity-80 transition-opacity"
+                >
+                  Sale Price
+                  <ArrowUpDown className="h-3 w-3" />
+                </button>
+              </th>
+              <th className="uppercase font-semibold px-3 py-3">Sale Date</th>
+              <th className="uppercase font-semibold px-3 py-3">$/SqFt</th>
+            </tr>
+          </thead>
+          <tbody>
+            {sorted.map((comp, i) => {
+              const pricePerSqft = Math.round(comp.salePrice / comp.sqft);
+              return (
+                <tr
+                  key={i}
+                  className={i % 2 === 1 ? "bg-slate-bg" : "bg-card"}
+                >
+                  <td className="px-4 py-3 text-sm font-semibold text-navy sticky left-0 z-10"
+                    style={{ backgroundColor: "inherit" }}
+                  >
                     {comp.address}
-                  </p>
-                </div>
-                <div className="flex items-center gap-4 text-xs text-mid mt-2">
-                  <span className="flex items-center gap-1">
-                    <Calendar className="h-3 w-3" />
-                    {comp.saleDate}
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <Ruler className="h-3 w-3" />
-                    {comp.sqft.toLocaleString()} sqft
-                  </span>
-                  <span>
+                  </td>
+                  <td className="px-3 py-3 text-sm text-foreground" style={{ fontVariantNumeric: "tabular-nums" }}>
                     {comp.beds}bd / {comp.baths}ba
-                  </span>
-                  <span>{comp.distance}</span>
-                </div>
-              </div>
-              <p className="text-base font-bold text-navy tabular-nums whitespace-nowrap">
-                {formatCurrency(comp.salePrice)}
-              </p>
-            </div>
-          </div>
-        ))}
+                  </td>
+                  <td className="px-3 py-3 text-sm text-foreground" style={{ fontVariantNumeric: "tabular-nums" }}>
+                    {comp.sqft.toLocaleString()}
+                  </td>
+                  <td className="px-3 py-3 text-sm font-semibold text-navy" style={{ fontVariantNumeric: "tabular-nums" }}>
+                    {formatCurrency(comp.salePrice)}
+                  </td>
+                  <td className="px-3 py-3 text-sm text-mid">
+                    {comp.saleDate}
+                  </td>
+                  <td className="px-3 py-3 text-sm font-semibold text-sky" style={{ fontVariantNumeric: "tabular-nums" }}>
+                    ${pricePerSqft}
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
       </div>
     </div>
   );

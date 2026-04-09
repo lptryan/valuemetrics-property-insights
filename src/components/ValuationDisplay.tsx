@@ -1,4 +1,9 @@
-import { TrendingUp, TrendingDown, Minus } from "lucide-react";
+import { Info } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface ValuationDisplayProps {
   estimatedValue: number;
@@ -15,6 +20,12 @@ const formatCurrency = (val: number) =>
     maximumFractionDigits: 0,
   }).format(val);
 
+const getConfidenceLabel = (score: number) => {
+  if (score > 0.75) return "HIGH CONFIDENCE";
+  if (score > 0.5) return "MODERATE CONFIDENCE";
+  return "LOW CONFIDENCE";
+};
+
 const ValuationDisplay = ({
   estimatedValue,
   confidenceLow,
@@ -22,54 +33,71 @@ const ValuationDisplay = ({
   confidenceScore,
   formattedAddress,
 }: ValuationDisplayProps) => {
-  const confidencePercent = Math.round(confidenceScore * 100);
-  const confidenceColor =
-    confidencePercent >= 80
-      ? "text-emerald-600"
-      : confidencePercent >= 60
-        ? "text-amber-500"
-        : "text-red-500";
-
   return (
-    <div className="bg-card rounded-lg border border-border p-8 shadow-sm">
-      <p className="text-sm text-mid mb-1">Estimated Market Value</p>
-      <p className="text-sm font-medium text-navy mb-4">{formattedAddress}</p>
+    <div className="space-y-5">
+      {/* Address */}
+      <p className="text-sm font-medium text-navy">{formattedAddress}</p>
 
-      <p className="text-5xl font-bold text-navy tabular-nums mb-2">
+      {/* Eyebrow */}
+      <p
+        className="text-sky font-semibold uppercase"
+        style={{ fontSize: "11px", letterSpacing: "0.1em" }}
+      >
+        ESTIMATED MARKET VALUE
+      </p>
+
+      {/* Big value */}
+      <p
+        className="text-navy font-extrabold"
+        style={{
+          fontSize: "56px",
+          fontVariantNumeric: "tabular-nums",
+          letterSpacing: "-0.02em",
+          lineHeight: 1.1,
+        }}
+      >
         {formatCurrency(estimatedValue)}
       </p>
 
-      <div className="flex items-center gap-6 mb-6">
-        <div className="flex items-center gap-1.5">
-          <TrendingDown className="h-4 w-4 text-mid" />
-          <span className="text-sm text-mid tabular-nums">
-            {formatCurrency(confidenceLow)}
-          </span>
-        </div>
-        <Minus className="h-4 w-4 text-border" />
-        <div className="flex items-center gap-1.5">
-          <TrendingUp className="h-4 w-4 text-mid" />
-          <span className="text-sm text-mid tabular-nums">
-            {formatCurrency(confidenceHigh)}
-          </span>
-        </div>
+      {/* Confidence range + tooltip */}
+      <div className="flex items-center gap-2">
+        <p
+          className="text-mid"
+          style={{
+            fontSize: "20px",
+            fontVariantNumeric: "tabular-nums",
+            letterSpacing: "-0.02em",
+          }}
+        >
+          {formatCurrency(confidenceLow)} – {formatCurrency(confidenceHigh)}
+        </p>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <button className="text-mid hover:text-navy transition-colors">
+              <Info className="h-4 w-4" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent side="right" className="max-w-[260px] text-xs">
+            Our confidence range reflects the variability in recent comparable
+            sales. High confidence means recent nearby sales are closely priced.
+          </TooltipContent>
+        </Tooltip>
       </div>
 
-      {/* Confidence bar */}
-      <div className="space-y-2">
-        <div className="flex justify-between items-center">
-          <span className="text-xs font-medium text-mid">Confidence</span>
-          <span className={`text-sm font-bold tabular-nums ${confidenceColor}`}>
-            {confidencePercent}%
-          </span>
-        </div>
-        <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
-          <div
-            className="h-full bg-sky rounded-full transition-all duration-500"
-            style={{ width: `${confidencePercent}%` }}
-          />
-        </div>
+      {/* Confidence badge */}
+      <div>
+        <span
+          className="inline-block bg-sky/15 text-sky font-bold uppercase rounded-full px-3 py-1"
+          style={{ fontSize: "10px", letterSpacing: "0.08em" }}
+        >
+          {getConfidenceLabel(confidenceScore)}
+        </span>
       </div>
+
+      {/* Date line */}
+      <p className="text-mid" style={{ fontSize: "12px" }}>
+        Based on data through March 2026
+      </p>
     </div>
   );
 };
