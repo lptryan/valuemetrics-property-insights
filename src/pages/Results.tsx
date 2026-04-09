@@ -10,6 +10,7 @@ import {
   useLeadModal,
 } from "@/components/LeadCaptureModal";
 import { ArrowLeft } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const DEMO_VALUATION = {
   estimatedValue: 487500,
