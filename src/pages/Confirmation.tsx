@@ -29,53 +29,48 @@ const Confirmation = () => {
   const confidenceHigh = state?.confidenceHigh || 517000;
   const resultsUrl = state?.resultsUrl || "/results";
 
-  // Truncate long addresses
   const truncatedAddress =
     address.length > 50 ? address.slice(0, 47) + "…" : address;
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-bg">
       <Navbar />
-      <main className="flex-1 flex items-center justify-center px-4 py-12">
-        <div className="w-full max-w-[520px] space-y-6">
+      <main className="flex-1 flex items-center justify-center px-4 py-8 md:py-12">
+        <div className="w-full max-w-[520px] space-y-5 md:space-y-6">
           {/* Main confirmation card */}
-          <div className="bg-card rounded-xl p-12 text-center space-y-5">
+          <div className="bg-card rounded-xl p-6 md:p-12 text-center space-y-4 md:space-y-5">
             {/* Checkmark icon */}
             <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-navy">
               <Check className="h-6 w-6 text-sky" strokeWidth={3} />
             </div>
 
-            {/* Headline */}
-            <h1 className="text-[28px] font-bold text-navy">Review Requested</h1>
+            <h1 className="text-2xl md:text-[28px] font-bold text-navy">Review Requested</h1>
 
-            {/* Body */}
-            <p className="text-base text-mid leading-relaxed">
+            <p className="text-sm md:text-base text-mid leading-relaxed">
               We've sent your estimate summary to{" "}
-              <span className="font-medium text-navy">{email}</span>. A local
+              <span className="font-medium text-navy break-all">{email}</span>. A local
               specialist will be in touch within 2 hours.
             </p>
 
-            {/* Divider */}
-            <div className="border-t border-border my-6" />
+            <div className="border-t border-border my-4 md:my-6" />
 
             {/* Estimate recap card */}
-            <div className="bg-slate-bg rounded-xl p-6 text-center space-y-2">
+            <div className="bg-slate-bg rounded-xl p-5 md:p-6 text-center space-y-2">
               <p className="text-sm text-mid truncate">{truncatedAddress}</p>
               <p
-                className="text-3xl font-extrabold text-navy"
+                className="text-2xl md:text-3xl font-extrabold text-navy"
                 style={{ fontVariantNumeric: "tabular-nums", letterSpacing: "-0.02em" }}
               >
                 {formatCurrency(estimatedValue)}
               </p>
               <p
-                className="text-sm text-mid"
+                className="text-xs md:text-sm text-mid"
                 style={{ fontVariantNumeric: "tabular-nums" }}
               >
                 {formatCurrency(confidenceLow)} – {formatCurrency(confidenceHigh)}
               </p>
             </div>
 
-            {/* Back to results */}
             <Link to={resultsUrl}>
               <Button
                 variant="outline"
@@ -87,11 +82,10 @@ const Confirmation = () => {
           </div>
 
           {/* Editorial module */}
-          <div className="bg-card rounded-xl p-8 text-center space-y-3">
+          <div className="bg-card rounded-xl p-6 md:p-8 text-center space-y-3">
             <h3 className="text-lg font-bold text-navy">Find homes near you</h3>
             <p className="text-sm text-mid leading-relaxed">
-              Get free email alerts when homes matching your criteria hit the
-              market.
+              Get free email alerts when homes matching your criteria hit the market.
             </p>
             <Button
               variant="ghost"
