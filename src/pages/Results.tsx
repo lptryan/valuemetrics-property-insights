@@ -62,7 +62,7 @@ const Results = () => {
   return (
     <div className="min-h-screen flex flex-col bg-card">
       <Navbar />
-      <main className="flex-1">
+      <main className="flex-1 animate-in fade-in slide-in-from-bottom-8 duration-700">
         <div className="mx-auto max-w-[960px] px-4 py-6 md:py-8 pb-24 lg:pb-8">
           <Link
             to="/"
