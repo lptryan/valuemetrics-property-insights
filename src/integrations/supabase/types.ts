@@ -14,7 +14,131 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      avm_cache: {
+        Row: {
+          address_hash: string
+          attom_response: Json | null
+          cached_at: string | null
+          expires_at: string | null
+        }
+        Insert: {
+          address_hash: string
+          attom_response?: Json | null
+          cached_at?: string | null
+          expires_at?: string | null
+        }
+        Update: {
+          address_hash?: string
+          attom_response?: Json | null
+          cached_at?: string | null
+          expires_at?: string | null
+        }
+        Relationships: []
+      }
+      vm_estimates: {
+        Row: {
+          address_input: string | null
+          attom_property_id: string | null
+          comps_json: Json | null
+          confidence_high: number | null
+          confidence_low: number | null
+          confidence_score: number | null
+          created_at: string | null
+          estimated_value: number | null
+          formatted_address: string | null
+          id: string
+          lat: number | null
+          lng: number | null
+          neighborhood_json: Json | null
+          session_id: string | null
+        }
+        Insert: {
+          address_input?: string | null
+          attom_property_id?: string | null
+          comps_json?: Json | null
+          confidence_high?: number | null
+          confidence_low?: number | null
+          confidence_score?: number | null
+          created_at?: string | null
+          estimated_value?: number | null
+          formatted_address?: string | null
+          id?: string
+          lat?: number | null
+          lng?: number | null
+          neighborhood_json?: Json | null
+          session_id?: string | null
+        }
+        Update: {
+          address_input?: string | null
+          attom_property_id?: string | null
+          comps_json?: Json | null
+          confidence_high?: number | null
+          confidence_low?: number | null
+          confidence_score?: number | null
+          created_at?: string | null
+          estimated_value?: number | null
+          formatted_address?: string | null
+          id?: string
+          lat?: number | null
+          lng?: number | null
+          neighborhood_json?: Json | null
+          session_id?: string | null
+        }
+        Relationships: []
+      }
+      vm_leads: {
+        Row: {
+          created_at: string | null
+          email: string
+          estimate_id: string | null
+          full_name: string | null
+          id: string
+          ip_address: unknown
+          phone: string | null
+          situation: string | null
+          source_domain: string | null
+          utm_campaign: string | null
+          utm_medium: string | null
+          utm_source: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          email: string
+          estimate_id?: string | null
+          full_name?: string | null
+          id?: string
+          ip_address?: unknown
+          phone?: string | null
+          situation?: string | null
+          source_domain?: string | null
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          email?: string
+          estimate_id?: string | null
+          full_name?: string | null
+          id?: string
+          ip_address?: unknown
+          phone?: string | null
+          situation?: string | null
+          source_domain?: string | null
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vm_leads_estimate_id_fkey"
+            columns: ["estimate_id"]
+            isOneToOne: false
+            referencedRelation: "vm_estimates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
